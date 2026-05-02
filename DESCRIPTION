@@ -23,4 +23,5 @@ Imports:
     methods,
     rhdf5,
     anndataR
+biocViews:
 RoxygenNote: 7.3.3
