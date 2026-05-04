@@ -1,105 +1,79 @@
-# Spatial Converter
-[Seurat by satijalab](https://satijalab.org/seurat/), [AnnData by scverse](https://anndata.readthedocs.io/en/stable/) and [BioConductor's SpatialExperiment](https://www.bioconductor.org/packages/release/bioc/html/SpatialExperiment.html) are some of the most commonly used data objects for spatial omics data. These functions provide the ability to convert between Seurat and the other data objects, using csv files as an intermediary. 
+# SpatialConverteR
+SpatialConverteR is an R package for conversion of single-cell -omics data objects. The package facilitates conversion between 
+[Seurat by satijalab](https://satijalab.org/seurat/), [AnnData by scverse](https://anndata.readthedocs.io/en/stable/) and [BioConductor's SpatialExperiment](https://www.bioconductor.org/packages/release/bioc/html/SpatialExperiment.html)/[SingleCellExperiment](https://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html), and is compatible with disassociated single-cell and spatial data. 
 
-# Dependencies
-R:
-- [Seurat](https://satijalab.org/seurat/)
-- [readr](https://readr.tidyverse.org/)
-- [dplyr](https://dplyr.tidyverse.org/)
-- [stringr](https://stringr.tidyverse.org/)
-- [SpatialExperiment](https://www.bioconductor.org/packages/release/bioc/html/SpatialExperiment.html) (for conversion between Seurat and SpatialExperiment)
-- [SPIAT](https://trigosteam.github.io/SPIAT/) (for conversion between Seurat and SPIAT-compatible SpatialExperiment)
+Developed for use fully in R, the package functions without the need for any python virtual environments, and supports conversion with spatial and image data.
 
-Python: (if converting to and from AnnData)
-- [pandas](https://pandas.pydata.org/)
-- [anndata](https://anndata.readthedocs.io/en/stable/)
-- [numpy](https://numpy.org/)
-
-# Syntax
-## AnnData to Seurat
-### Python:
+# Installation
+Install as an R package using remotes:
 ```
-from anndata_functions import * 
-Anndata_to_csv(adata, export_dir)
+if (!requireNamespace("remotes", quietly = TRUE))
+	install.packages("remotes")
+
+remotes::install_github("TrigosTeam/SpatialConverteR")
 ```
-**Arguments:**
-- *adata:* AnnData object in workspace
-- *export_dir:* String. Directory for csv files to be written to
 
-**Returns:**
 
-None
-
-### R:
+# Usage
+### Seurat and AnnData
+Ensure Seurat and AnndataR are installed.
 ```
-source("seurat_functions.R")
-csv_to_Seurat(import_dir, assay_name)
+if (!requireNamespace("Seurat", quietly = TRUE))
+	install.packages("Seurat")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+	install.packages("BiocManager")
+if (!requireNamespace("AnndataR", quietly = TRUE))
+	BiocManager::install("AnndataR")
+
+# AnnData to Seurat
+SpatialConverteR::anndataToSeurat(adata_path, image = FALSE)
+
+# Seurat to AnnData
+SpatialConverteR::seuratToAnndata(seurat_obj, export_path, raw_counts_names = c("RNA", "counts"), image = FALSE)
 ```
-**Arguments:**
-- *import_dir:* String. Directory where csv files are located
-- *assay_name:* String. Desired name for Seurat assay.
 
-**Returns:**
-
-Seurat object
-
-## Seurat to AnnData
-### R:
+### Seurat and SingleCellExperiment/SpatialExperiment
+Ensure Seurat, SingleCellExperiment and SpatialExperiment are installed.
 ```
-source("seurat_functions.R")
-Seurat_to_csv(seurat_obj, export_dir)
+if (!requireNamespace("Seurat", quietly = TRUE))
+	install.packages("Seurat")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+	install.packages("BiocManager")
+if (!requireNamespace("SpatialExperiment", quietly = TRUE))
+	BiocManager::install("SpatialExperiment")
+
+# Seurat to SingleCellExperiment/SpatialExperiment
+SpatialConverteR::seuratToSpatialExperiment(seurat_obj, image = FALSE)
+
+# SingleCellExperiment/SpatialExperiment to Seurat
+SpatialConverteR::spatialExperimentToSeurat(spe, raw_counts_name = "counts", image = FALSE)
 ```
-**Arguments:**
-- *seurat_obj:* Seurat object, with spatial coordinates in the ``@image$centroids`` slot.
-- *export_dir:* String. Directory for csv files to be written to
 
-**Returns:**
-
-None
-
-### Python:
+### SingleCellExperiment/SpatialExperiment and AnnData
+Ensure SingleCellExperiment, SpatialExperiment and anndataR are installed.
 ```
-from anndata_functions import *
-csv_to_Anndata(import_dir)
+if (!requireNamespace("BiocManager", quietly = TRUE))
+	install.packages("BiocManager")
+if (!requireNamespace("SpatialExperiment", quietly = TRUE))
+	BiocManager::install("SpatialExperiment")
+if (!requireNamespace("AnndataR", quietly = TRUE))
+	BiocManager::install("AnndataR")
+
+# AnnData to SingleCellExperiment/SpatialExperiment
+SpatialConverteR::anndataToSpatialExperiment(adata_path, image = FALSE)
+
+# SingleCellExperiment/SpatialExperiment to AnnData
+SpatialConverteR::spatialExperimentToAnndata(spe, export_path, raw_counts_name = "counts", image = FALSE)
 ```
-**Arguments:**
-- *import_dir:* String. Directory where csv files are located
+More information is provided in the documentation of each function.
 
-**Returns:**
 
-AnnData Object
+# Alternatives
+There are multiple known alternatives:
+1. [anndataR](https://www.bioconductor.org/packages/release/bioc/html/anndataR.html)
+2. [zellkonverter](https://bioconductor.org/packages/release/bioc/html/zellkonverter.html)
+3. [SeuratDisk](https://github.com/mojaveazure/seurat-disk)
+4. [sceasy](https://github.com/cellgeni/sceasy) and [schard](https://github.com/cellgeni/schard/tree/main)
+5. [anndata2ri](https://pypi.org/project/anndata2ri/)
 
-## Seurat to SpatialExperiment
-### R:
-```
-source("seurat_functions.R")
-Seurat_to_SPE(seurat_obj)
-```
-**Arguments:**
-- *seurat_obj:* Seurat object, with spatial coordinates in the ``@image$centroids`` slot.
-
-**Returns:**
-
-SpatialExperiment Object
-
-## Seurat to SPIAT-compatible SpatialExperiment
-### R:
-```
-source("seurat_functions.R")
-Seurat_to_SPIATSPE(seurat_obj)
-```
-**Arguments:**
-- *seurat_obj:* Seurat object, with spatial coordinates in the ``@image$centroids`` slot.
-
-**Returns:**
-
-SpatialExperiment Object in format suitable for use with SPIAT functions
-
-# Note:
-- When converting from Seurat to AnnData:
-  - The function assumes that the original Seurat object includes spatial data, in the image@centroids slot.
-- When converting from AnnData to Seurat:
-	- Feature/Gene metadata will be lost, due to Seurat having no consistent method for storing this information. If required, please add the information manually.
-  - If there are HTML color codes in the metadata/obs dataframe, please remove before conversion, as R struggles to read in hexadecimal numerals.
-- When converting from Seurat to SpatialExperiment, some metadata, such as dimension reduction will be lost.
-- When converting from Seurat to SPIAT-compatible SpatialExperiment, all cell metadata, except Cell Identity will be lost.
+However, many of these require the use of a python environment, struggle with spatial data, do not support conversion with histological imaging, or are no longer supported.
