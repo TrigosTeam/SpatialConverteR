@@ -77,3 +77,4 @@ There are multiple known alternatives:
 5. [anndata2ri](https://pypi.org/project/anndata2ri/)
 
 However, many of these require the use of a python environment, struggle with spatial data, do not support conversion with histological imaging, or are no longer supported.
+It is important to note that this package expands upon the functionality provided by anndataR for conversion to AnnData objects, but adds on the capability to import spatial and imaging data to suitable locations.
